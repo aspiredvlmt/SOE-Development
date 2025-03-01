@@ -1,0 +1,21 @@
+/* Custom CSS for the Login Form */
+.bg-primary {
+    background-color: #3b82f6 !important;
+  }
+  
+  .text-primary {
+    color: #3b82f6 !important;
+  }
+  
+  .shadow-lg {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .rounded {
+    border-radius: 10px;
+  }
+  
+  .img-fluid {
+    max-width: 100%;
+    height: auto;
+  }
