@@ -18,6 +18,9 @@
 }
 
 /* Title and Subtitles */
+.form-code{
+    text-align: center;
+}
 .form-title {
     text-align: center;
     font-size: 22px;
@@ -84,6 +87,7 @@ input[type="time"] {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 15px;
+    margin-bottom: 10px;
 }
 
 .grid-item {
