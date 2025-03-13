@@ -1,0 +1,193 @@
+.job-form-container {
+    max-width: 700px;
+    margin: 0 auto;
+    background-color: #f0f8ff;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+  }
+  
+  .job-form-header {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .job-form-header h1 {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  
+  .job-form-header p {
+    font-size: 14px;
+    color: #666;
+    margin: 0;
+  }
+  
+  .job-form-header .sub-text {
+    font-size: 12px;
+    color: #999;
+  }
+  
+  .date-field {
+    margin-bottom: 20px;
+  }
+  
+  .date-field label {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 5px;
+  }
+  
+  .date-field input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 180px;
+  }
+  
+  .purpose-field {
+    margin-bottom: 25px;
+  }
+  
+  .purpose-field label {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 5px;
+  }
+  
+  .purpose-field input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .job-items-table {
+    margin-bottom: 20px;
+  }
+  
+  /* Updated table headers to match Figma design */
+  .form-table-labels {
+    display: flex;
+    margin-bottom: 8px;
+  }
+  
+  .qty-label {
+    width: 60px;
+    font-size: 14px;
+    padding-left: 5px;
+  }
+  
+  .particulars-label {
+    width: 210px;
+    font-size: 14px;
+    padding-left: 5px;
+  }
+  
+  .nature-label {
+    width: 210px;
+    font-size: 14px;
+    padding-left: 5px;
+  }
+  
+  .remarks-label {
+    width: 210px;
+    font-size: 14px;
+    padding-left: 5px;
+  }
+  
+  .job-item-row {
+    display: flex;
+    margin-bottom: 10px;
+    gap: 10px;
+  }
+  
+  .qty-input {
+    width: 60px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .particulars-input, .nature-input, .remarks-input {
+    width: 210px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .add-button-container {
+    display: flex;
+    justify-content: center;
+    margin: 15px 0;
+  }
+  
+  .add-button {
+    background-color: #2196f3;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 20px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+  }
+  
+  .add-button:hover {
+    background-color: #0d8bf2;
+  }
+  
+  .submit-button {
+    width: 100%;
+    background-color: #2196f3;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 15px;
+  }
+  
+  .submit-button:hover {
+    background-color: #0d8bf2;
+  }
+  
+  .form-number {
+    text-align: right;
+    font-size: 12px;
+    color: #2196f3;
+    margin-top: 10px;
+  }
+  
+  /* Ensure form inputs have consistent styling */
+  input {
+    font-family: Inter, Arial, sans-serif;
+  }
+  
+  /* Mobile responsiveness */
+  @media (max-width: 700px) {
+    .form-table-labels {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5px;
+    }
+    
+    .job-item-row {
+      flex-wrap: wrap;
+    }
+    
+    .qty-input {
+      width: 60px;
+    }
+    
+    .particulars-input, .nature-input, .remarks-input {
+      width: calc(33% - 10px);
+    }
+    
+    .qty-label, .particulars-label, .nature-label, .remarks-label {
+      width: auto;
+    }
+  }
