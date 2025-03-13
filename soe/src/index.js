@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import App from '../src/PurchaseRequisitionForm';
+import App from './RequestManagement';
 import reportWebVitals from './reportWebVitals';
 
 
