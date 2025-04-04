@@ -10,7 +10,10 @@ const RequestDistribution = ({ data }) => {
     <div className="request-distribution">
       <div className="pie-chart">
         <svg viewBox="0 0 100 100">
+          {/* Background circle */}
           <circle cx="50" cy="50" r="25" fill="white" />
+          
+          {/* Pie segments */}
           {data.map((item, index) => {
             const startAngle = currentAngle;
             const percentage = item.value / total;
@@ -32,6 +35,9 @@ const RequestDistribution = ({ data }) => {
               />
             );
           })}
+          
+          {/* Center hole for donut effect */}
+          <circle cx="50" cy="50" r="12" className="donut-hole" />
         </svg>
       </div>
       <div className="distribution-legend">
