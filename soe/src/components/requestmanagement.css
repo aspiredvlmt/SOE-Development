@@ -1,5 +1,4 @@
-/* 
- * Record Management CSS
+/* * Record Management CSS
  * Structure:
  * 1. Global & Container Styles
  * 2. Header Styles
@@ -551,7 +550,7 @@
   transition: background-color 0.2s;
 }
 
-.approve-button:hover {
+button:hover {
   background-color: var(--primary-dark);
 }
 

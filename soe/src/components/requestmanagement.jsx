@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Search, Bell, Edit2, ChevronDown, X } from "lucide-react";
+import { VehicleReservationForm, FacilityReservationForm, JobRequestForm, PurchaseRequestForm } from "./Formcomponents";
 import "./recordmanagement.css";
 
 function RequestManagement() {
@@ -27,6 +28,15 @@ function RequestManagement() {
             natureOfWork: "Service",
             dateCompleted: "",
             particulars: [{ qty: "", details: "" }],
+            // Vehicle specific fields
+            requestor: "John Doe",
+            departureTime: "08:00",
+            arrivalTime: "17:00",
+            driver: "Mike Smith",
+            destination: "Downtown Office",
+            purpose: "Client Meeting",
+            passengerCount: "3",
+            passengers: "John Doe, Jane Smith, Mark Johnson"
         },
         { id: 2,
             type: "Facility",
@@ -38,6 +48,15 @@ function RequestManagement() {
             natureOfWork: "Facility Reservation",
             dateCompleted: "",
             particulars: [{ qty: "", details: "" }],
+            // Facility specific fields
+            requestor: "Jane Smith",
+            venue: "Conference Room A",
+            natureOfActivity: "Meeting",
+            activity: "Quarterly Planning",
+            purpose: "Team Planning Session",
+            timeStart: "9:00 am - 5:00 pm",
+            specialInstruction: "Need projector setup",
+            materialsEquipment: "Projector, Whiteboard, Markers"
         },
         { id: 3,
             type: "Purchase",
@@ -48,7 +67,10 @@ function RequestManagement() {
             status: "Ongoing",
             natureOfWork: "Re-stock",
             dateCompleted: "",
-            particulars: [{ qty: "", details: "" }],
+            particulars: [
+                { qty: "10", details: "Office Paper (A4)" },
+                { qty: "5", details: "Ink Cartridges (Black)" }
+            ],
         },
     ];
 
@@ -130,6 +152,25 @@ function RequestManagement() {
         }
     };
 
+    // Handle field change for form inputs
+    const handleFieldChange = (field, value) => {
+        if (selectedRequest) {
+            const updatedRequest = {
+                ...selectedRequest,
+                [field]: value,
+            };
+            
+            setSelectedRequest(updatedRequest);
+            
+            // Update in the main requests list
+            setRequests(
+                requests.map((req) =>
+                    req.id === selectedRequest.id ? updatedRequest : req
+                )
+            );
+        }
+    };
+
     // Handle approving a request
     const handleApproveRequest = () => {
         if (selectedRequest) {
@@ -186,15 +227,20 @@ function RequestManagement() {
 
     // Handle creating a new request
     const handleNewRequest = () => {
+        // Get the next ID
         const newId =
             requests.length > 0
                 ? Math.max(...requests.map((r) => r.id)) + 1
                 : 1;
-        const newReferenceNo = `OSO-JR-${String(newId).padStart(4, "0")}`;
+                
+        // Create appropriate reference number based on selected type
+        const type = "Job"; // Default type
+        const typePrefix = getTypePrefix(type);
+        const newReferenceNo = `OSO-${typePrefix}-${String(newId).padStart(4, "0")}`;
 
         const newRequest = {
             id: newId,
-            type: "Job", // Default type
+            type: type,
             referenceNo: newReferenceNo,
             from: "",
             dateSubmitted: new Date().toLocaleDateString(),
@@ -209,24 +255,93 @@ function RequestManagement() {
         setShowRequests(false);
     };
 
+    // Helper function to get type prefix
+    const getTypePrefix = (type) => {
+        switch (type) {
+            case "Vehicle":
+                return "VR";
+            case "Facility":
+                return "FR";
+            case "Purchase":
+                return "PR";
+            case "Job":
+            default:
+                return "JR";
+        }
+    };
+
     // Handle saving a new request
     const handleSaveNewRequest = () => {
-        if (
-            selectedRequest &&
-            !requests.find((r) => r.id === selectedRequest.id)
-        ) {
-            setRequests([...requests, selectedRequest]);
+        if (selectedRequest) {
+            let requestToSave = { ...selectedRequest };
+            
+            // Create appropriate reference number based on type
+            const typePrefix = getTypePrefix(requestToSave.type);
+            requestToSave.referenceNo = `OSO-${typePrefix}-${String(requestToSave.id).padStart(4, "0")}`;
+            
+            // If this is a new request, add it
+            if (!requests.find((r) => r.id === selectedRequest.id)) {
+                setRequests([...requests, requestToSave]);
+            } else {
+                // Otherwise update the existing request
+                setRequests(
+                    requests.map((req) =>
+                        req.id === requestToSave.id ? requestToSave : req
+                    )
+                );
+            }
         }
         setShowRequests(true);
     };
 
     // Handle type change in new request form
-    const handleTypeChange = (e) => {
+    const handleTypeChange = (type) => {
         if (selectedRequest) {
             setSelectedRequest({
                 ...selectedRequest,
-                type: e.target.value,
+                type: type,
             });
+        }
+    };
+
+    // Render the appropriate form based on request type
+    const renderRequestForm = (request, readOnly = true) => {
+        switch (request.type) {
+            case "Vehicle":
+                return (
+                    <VehicleReservationForm 
+                        request={request} 
+                        onFieldChange={handleFieldChange}
+                        readOnly={readOnly}
+                    />
+                );
+            case "Facility":
+                return (
+                    <FacilityReservationForm 
+                        request={request} 
+                        onFieldChange={handleFieldChange}
+                        readOnly={readOnly}
+                    />
+                );
+            case "Purchase":
+                return (
+                    <PurchaseRequestForm 
+                        request={request} 
+                        onFieldChange={handleFieldChange}
+                        readOnly={readOnly}
+                        onAddParticulars={handleAddParticulars}
+                    />
+                );
+            case "Job":
+            default:
+                return (
+                    <JobRequestForm 
+                        request={request} 
+                        onFieldChange={handleFieldChange}
+                        readOnly={readOnly}
+                        onAddParticulars={handleAddParticulars}
+                    />
+                );
         }
     };
 
@@ -388,154 +503,50 @@ function RequestManagement() {
                                                                             }
                                                                         </div>
 
-                                                                        <div className="form-grid">
-                                                                            <div className="form-left">
-                                                                                <div className="form-group">
-                                                                                    <div className="form-label">
-                                                                                        Type:
-                                                                                    </div>
-                                                                                    <div className="form-value">
-                                                                                        {request.type}
-                                                                                    </div>
-                                                                                </div>
-                                                                                <div className="form-group">
-                                                                                    <div className="form-label">
-                                                                                        Date
-                                                                                        Submitted:
-                                                                                    </div>
-                                                                                    <div className="form-value">
-                                                                                        {
-                                                                                            request.dateSubmitted
-                                                                                        }
-                                                                                    </div>
-                                                                                </div>
-                                                                                <div className="form-group">
-                                                                                    <div className="form-label">
-                                                                                        Date
-                                                                                        Needed:
-                                                                                    </div>
-                                                                                    <div className="form-value">
-                                                                                        {
-                                                                                            request.dateNeeded
-                                                                                        }
-                                                                                    </div>
-                                                                                </div>
-                                                                                <div className="form-group">
-                                                                                    <div className="form-label">
-                                                                                        Date
-                                                                                        Completed:
-                                                                                    </div>
-                                                                                    <div className="form-value">
-                                                                                        {request.dateCompleted ||
-                                                                                            "-"}
-                                                                                    </div>
-                                                                                </div>
-                                                                                <div className="form-group">
-                                                                                    <div className="form-label">
-                                                                                        Nature
-                                                                                        of
-                                                                                        Work:
-                                                                                    </div>
-                                                                                    <div className="form-value">
-                                                                                        {
-                                                                                            request.natureOfWork
-                                                                                        }
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                            <div className="form-right">
-                                                                                <table className="particulars-table">
-                                                                                    <thead>
-                                                                                        <tr>
-                                                                                            <th className="particulars-header">
-                                                                                                Qty
-                                                                                            </th>
-                                                                                            <th className="particulars-header">
-                                                                                                Particulars
-                                                                                            </th>
-                                                                                        </tr>
-                                                                                    </thead>
-                                                                                    <tbody>
-                                                                                        {request.particulars.map(
-                                                                                            (
-                                                                                                item,
-                                                                                                index
-                                                                                            ) => (
-                                                                                                <tr
-                                                                                                    key={
-                                                                                                        index
-                                                                                                    }
-                                                                                                >
-                                                                                                    <td className="particulars-cell">
-                                                                                                        <input
-                                                                                                            type="text"
-                                                                                                            className="qty-input"
-                                                                                                            value={
-                                                                                                                item.qty
-                                                                                                            }
-                                                                                                            onChange={(
-                                                                                                                e
-                                                                                                            ) =>
-                                                                                                                handleParticularsChange(
-                                                                                                                    index,
-                                                                                                                    "qty",
-                                                                                                                    e
-                                                                                                                        .target
-                                                                                                                        .value
-                                                                                                                )
-                                                                                                            }
-                                                                                                        />
-                                                                                                    </td>
-                                                                                                    <td className="particulars-cell">
-                                                                                                        <input
-                                                                                                            type="text"
-                                                                                                            className="details-input"
-                                                                                                            value={
-                                                                                                                item.details
-                                                                                                            }
-                                                                                                            onChange={(
-                                                                                                                e
-                                                                                                            ) =>
-                                                                                                                handleParticularsChange(
-                                                                                                                    index,
-                                                                                                                    "details",
-                                                                                                                    e
-                                                                                                                        .target
-                                                                                                                        .value
-                                                                                                                )
-                                                                                                            }
-                                                                                                        />
-                                                                                                    </td>
-                                                                                                </tr>
-                                                                                            )
-                                                                                        )}
-                                                                                    </tbody>
-                                                                                </table>
-                                                                                <button
-                                                                                    className="add-item-button"
-                                                                                    onClick={
-                                                                                        handleAddParticulars
-                                                                                    }
-                                                                                >
-                                                                                    +
-                                                                                    Add
-                                                                                    item
-                                                                                </button>
-                                                                            </div>
-                                                                        </div>
+                                                                        {renderRequestForm(request, true)}
 
                                                                         <div className="action-buttons">
+                                                                            {request.status === "Pending" && (
+                                                                                <>
+                                                                                    <button
+                                                                                        className="approve-button"
+                                                                                        onClick={handleApproveRequest}
+                                                                                    >
+                                                                                        Approve
+                                                                                    </button>
+                                                                                    <button
+                                                                                        className="reject-button"
+                                                                                        onClick={handleOpenRejectionModal}
+                                                                                    >
+                                                                                        Reject
+                                                                                    </button>
+                                                                                </>
+                                                                            )}
+                                                                            {request.status === "Ongoing" && (
+                                                                                <button
+                                                                                    className="approve-button"
+                                                                                    onClick={() => {
+                                                                                        const updatedRequest = {
+                                                                                            ...request,
+                                                                                            status: "Completed",
+                                                                                            dateCompleted: new Date().toLocaleDateString()
+                                                                                        };
+                                                                                        setRequests(
+                                                                                            requests.map(req => 
+                                                                                                req.id === request.id ? updatedRequest : req
+                                                                                            )
+                                                                                        );
+                                                                                        setSelectedRequest(null);
+                                                                                    }}
+                                                                                >
+                                                                                    Mark as Completed
+                                                                                </button>
+                                                                            )}
                                                                             <button
-                                                                                className="approve-button"
-                                                                                onClick={handleApproveRequest}
+                                                                                className="close-button"
+                                                                                onClick={() => setSelectedRequest(null)}
                                                                             >
-                                                                                Approve
-                                                                            </button>
-                                                                            <button
-                                                                                className="reject-button"
-                                                                                onClick={handleOpenRejectionModal}
-                                                                            >
-                                                                                Reject
+                                                                                Close
                                                                             </button>
                                                                         </div>
                                                                     </div>
@@ -555,153 +566,28 @@ function RequestManagement() {
                         </>
                     ) : (
                         <div className="new-request-form">
-                            <h2 className="form-title">New Request Form</h2>
+                            <h2 className="form-title">New {selectedRequest?.type} Request Form</h2>
                             <div className="reference-number">
                                 {selectedRequest?.referenceNo}
                             </div>
 
-                            <div className="form-grid">
-                                <div className="form-left">
-                                    <div className="form-group">
-                                        <div className="form-label">Type:</div>
-                                        <div className="form-type-selector">
-                                            {typeOptions.filter(type => type !== "All").map((type) => (
-                                                <button
-                                                    key={type}
-                                                    className={`type-selector-button ${selectedRequest?.type === type ? 'active' : ''}`}
-                                                    onClick={() => setSelectedRequest({
-                                                        ...selectedRequest,
-                                                        type: type,
-                                                    })}
-                                                >
-                                                    {type}
-                                                </button>
-                                            ))}
-                                        </div>
-                                    </div>
-                                    <div className="form-group">
-                                        <div className="form-label">From:</div>
-                                        <input
-                                            type="text"
-                                            className="text-input"
-                                            value={selectedRequest?.from || ""}
-                                            onChange={(e) =>
-                                                setSelectedRequest({
-                                                    ...selectedRequest,
-                                                    from: e.target.value,
-                                                })
-                                            }
-                                        />
-                                    </div>
-                                    <div className="form-group">
-                                        <div className="form-label">
-                                            Date Submitted:
-                                        </div>
-                                        <div className="form-value">
-                                            {selectedRequest?.dateSubmitted}
-                                        </div>
-                                    </div>
-                                    <div className="form-group">
-                                        <div className="form-label">
-                                            Date Needed:
-                                        </div>
-                                        <input
-                                            type="date"
-                                            className="date-input"
-                                            value={
-                                                selectedRequest?.dateNeeded ||
-                                                ""
-                                            }
-                                            onChange={(e) =>
-                                                setSelectedRequest({
-                                                    ...selectedRequest,
-                                                    dateNeeded: e.target.value,
-                                                })
-                                            }
-                                        />
-                                    </div>
-                                    <div className="form-group">
-                                        <div className="form-label">
-                                            Nature of Work:
-                                        </div>
-                                        <input
-                                            type="text"
-                                            className="text-input"
-                                            value={
-                                                selectedRequest?.natureOfWork ||
-                                                ""
-                                            }
-                                            onChange={(e) =>
-                                                setSelectedRequest({
-                                                    ...selectedRequest,
-                                                    natureOfWork:
-                                                        e.target.value,
-                                                })
-                                            }
-                                        />
-                                    </div>
-                                </div>
-                                <div className="form-right">
-                                    <table className="particulars-table">
-                                        <thead>
-                                            <tr>
-                                                <th className="particulars-header">
-                                                    Qty
-                                                </th>
-                                                <th className="particulars-header">
-                                                    Particulars
-                                                </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {selectedRequest?.particulars.map(
-                                                (item, index) => (
-                                                    <tr key={index}>
-                                                        <td className="particulars-cell">
-                                                            <input
-                                                                type="text"
-                                                                className="qty-input"
-                                                                value={item.qty}
-                                                                onChange={(e) =>
-                                                                    handleParticularsChange(
-                                                                        index,
-                                                                        "qty",
-                                                                        e.target
-                                                                            .value
-                                                                    )
-                                                                }
-                                                            />
-                                                        </td>
-                                                        <td className="particulars-cell">
-                                                            <input
-                                                                type="text"
-                                                                className="details-input"
-                                                                value={
-                                                                    item.details
-                                                                }
-                                                                onChange={(e) =>
-                                                                    handleParticularsChange(
-                                                                        index,
-                                                                        "details",
-                                                                        e.target
-                                                                            .value
-                                                                    )
-                                                                }
-                                                            />
-                                                        </td>
-                                                    </tr>
-                                                )
-                                            )}
-                                        </tbody>
-                                    </table>
-                                    <button
-                                        className="add-item-button"
-                                        onClick={handleAddParticulars}
-                                    >
-                                        + Add item
-                                    </button>
+                            <div className="form-type-selector-container">
+                                <div className="form-label">Request Type:</div>
+                                <div className="form-type-selector">
+                                    {typeOptions.filter(type => type !== "All").map((type) => (
+                                        <button
+                                            key={type}
+                                            className={`type-selector-button ${selectedRequest?.type === type ? 'active' : ''}`}
+                                            onClick={() => handleTypeChange(type)}
+                                        >
+                                            {type}
+                                        </button>
+                                    ))}
                                 </div>
                             </div>
+
+                            {/* Render the appropriate form based on the selected type */}
+                            {selectedRequest && renderRequestForm(selectedRequest, false)}
 
                             <div className="action-buttons">
                                 <button
