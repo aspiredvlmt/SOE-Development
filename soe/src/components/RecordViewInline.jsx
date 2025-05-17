@@ -1,17 +1,8 @@
-import React from "react";
-import { X } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import "./recordmanagement.css";
 
-// Modal version (this is still needed for cases where you want a full modal rather than inline)
-const RecordViewModal = ({ isOpen, onClose, request }) => {
-  if (!isOpen || !request) return null;
-  
-  // Handle bump action
-  const handleBump = () => {
-    console.log("Bumping request:", request.referenceNo);
-    // Add your bump functionality here
-  };
-  
+const RecordViewInline = ({ request, isExpanded, onToggle, onClose }) => {
   // Maps request type to appropriate form
   const getFormForType = () => {
     switch (request.type) {
@@ -28,24 +19,34 @@ const RecordViewModal = ({ isOpen, onClose, request }) => {
     }
   };
 
+  // Handle bump action
+  const handleBump = () => {
+    console.log("Bumping request:", request.referenceNo);
+    // Add your bump functionality here
+  };
+
   return (
-    <div className="modal-overlay">
-      {getFormForType()}
-    </div>
+    <tr className={`details-row ${isExpanded ? "expanded" : ""}`}>
+      <td colSpan="7" className="details-cell">
+        <div className="inline-form-container">
+          {getFormForType()}
+        </div>
+      </td>
+    </tr>
   );
 };
 
 // Facility Reservation Form Component
 const FacilityReservationForm = ({ request, onClose, onBump }) => {
   return (
-    <div className="form-container">
+    <div className="form-content">
       <div className="form-header">
         <h2 className="form-title">Facility Reservation Form</h2>
         <div className="reference-number">{request.referenceNo}</div>
       </div>
       
       <div className="form-content">
-        <div className="facility-form-layout">
+        <div className="form-field-container">
           <div className="form-field-left">
             <div className="field-row">
               <div className="field-label">Requestor:</div>
@@ -109,14 +110,14 @@ const FacilityReservationForm = ({ request, onClose, onBump }) => {
 // Vehicle Reservation Form Component
 const VehicleReservationForm = ({ request, onClose, onBump }) => {
   return (
-    <div className="form-container">
+    <div className="form-content">
       <div className="form-header">
         <h2 className="form-title">Vehicle Reservation Form</h2>
         <div className="reference-number">{request.referenceNo}</div>
       </div>
       
       <div className="form-content">
-        <div className="vehicle-form-layout">
+        <div className="form-field-container">
           <div className="form-field-left">
             <div className="field-row">
               <div className="field-label">Requestor:</div>
@@ -180,15 +181,15 @@ const VehicleReservationForm = ({ request, onClose, onBump }) => {
 // Job Request Form Component
 const JobRequestForm = ({ request, onClose, onBump }) => {
   return (
-    <div className="form-container">
+    <div className="form-content">
       <div className="form-header">
         <h2 className="form-title">Job Request Form</h2>
         <div className="reference-number">{request.referenceNo}</div>
       </div>
       
       <div className="form-content">
-        <div className="job-form-layout">
-          <div className="job-form-left">
+        <div className="job-request-layout">
+          <div className="form-field-left">
             <div className="field-row">
               <div className="field-label">Date Submitted:</div>
               <div className="field-value">{request.dateSubmitted || ""}</div>
@@ -207,15 +208,15 @@ const JobRequestForm = ({ request, onClose, onBump }) => {
             </div>
           </div>
           
-          <div className="job-form-right">
-            <div className="job-particulars-table">
-              <div className="particulars-header">
+          <div className="form-field-right">
+            <div className="particulars-table-container">
+              <div className="particulars-table-header">
                 <div className="particulars-header-qty">Qty</div>
                 <div className="particulars-header-desc">Particulars</div>
               </div>
-              <div className="particulars-content">
+              <div className="particulars-table-content">
                 {request.particulars && request.particulars.map((item, index) => (
-                  <div key={index} className="particulars-row">
+                  <div key={index} className="particulars-table-row">
                     <div className="particulars-cell-qty">{item.qty}</div>
                     <div className="particulars-cell-desc">{item.details}</div>
                   </div>
@@ -241,15 +242,15 @@ const JobRequestForm = ({ request, onClose, onBump }) => {
 // Purchase Request Form Component
 const PurchaseRequestForm = ({ request, onClose, onBump }) => {
   return (
-    <div className="form-container">
+    <div className="form-content">
       <div className="form-header">
         <h2 className="form-title">Purchase Requisition Form</h2>
         <div className="reference-number">{request.referenceNo}</div>
       </div>
       
       <div className="form-content">
-        <div className="purchase-form-layout">
-          <div className="purchase-form-left">
+        <div className="purchase-layout">
+          <div className="form-field-left">
             <div className="field-row">
               <div className="field-label">Requestor:</div>
               <div className="field-value">{request.from || ""}</div>
@@ -272,12 +273,12 @@ const PurchaseRequestForm = ({ request, onClose, onBump }) => {
             </div>
           </div>
           
-          <div className="purchase-form-right">
-            <div className="purchase-particulars">
+          <div className="form-field-right">
+            <div className="purchase-particulars-container">
               <div className="purchase-particulars-header">
                 Qty Particulars / Item Description /Specifications
               </div>
-              <div className="purchase-particulars-content">
+              <div className="purchase-particulars-list">
                 {request.particulars && request.particulars.map((item, index) => (
                   <div key={index} className="purchase-particulars-item">
                     - {item.qty} {item.details}
@@ -301,4 +302,4 @@ const PurchaseRequestForm = ({ request, onClose, onBump }) => {
   );
 };
 
-export default RecordViewModal;
+export default RecordViewInline;

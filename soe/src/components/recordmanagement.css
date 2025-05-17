@@ -10,6 +10,8 @@
  * 8. Action Buttons
  * 9. Modal Styles
  * 10. Responsive Adjustments
+ * 11. Form View Styles
+ * 12. Inline Form Styles (Added)
  */
 
 /* ===== 1. Global & Container Styles ===== */
@@ -780,5 +782,293 @@ button:hover {
   
   .form-type-selector {
     flex-wrap: wrap;
+  }
+}
+
+/* ===== 11. Form View Styles ===== */
+/* Form container - matches the images */
+.form-container {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  max-width: 800px;
+  width: 100%;
+  margin: 0 auto;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+}
+
+.form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.form-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+.reference-number {
+  color: #38bdf8;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.form-content {
+  padding: 24px;
+  background-color: #f9fafb;
+}
+
+/* Common form field layout for all forms */
+.form-field-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.field-row {
+  display: flex;
+  margin-bottom: 12px;
+}
+
+.field-label {
+  width: 160px;
+  font-weight: 500;
+  color: #4b5563;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.field-value {
+  color: #111827;
+  font-size: 14px;
+  flex: 1;
+}
+
+/* Form footer with buttons */
+.form-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 16px 24px;
+  gap: 12px;
+  border-top: 1px solid #e5e7eb;
+  background-color: #fff;
+}
+
+.bump-button, .close-button {
+  padding: 8px 24px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.bump-button {
+  background-color: white;
+  color: #3b82f6;
+  border: 1px solid #e5e7eb;
+}
+
+.bump-button:hover {
+  background-color: #f3f4f6;
+  border-color: #3b82f6;
+}
+
+.close-button {
+  background-color: #38bdf8;
+  color: white;
+  border: none;
+}
+
+.close-button:hover {
+  background-color: #0ea5e9;
+}
+
+/* Job Request Form specific styles */
+.job-request-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.particulars-table-container {
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-top: 12px;
+}
+
+.particulars-table-header {
+  display: flex;
+  background-color: #f3f4f6;
+  padding: 8px 12px;
+  font-weight: 500;
+  font-size: 14px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.particulars-header-qty {
+  width: 80px;
+}
+
+.particulars-header-desc {
+  flex: 1;
+}
+
+.particulars-table-row {
+  display: flex;
+  padding: 8px 12px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.particulars-cell-qty {
+  width: 80px;
+  font-size: 14px;
+}
+
+.particulars-cell-desc {
+  flex: 1;
+  font-size: 14px;
+}
+
+/* Purchase Request Form specific styles */
+.purchase-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.purchase-particulars-container {
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-top: 12px;
+}
+
+.purchase-particulars-header {
+  background-color: #f3f4f6;
+  padding: 8px 12px;
+  font-weight: 500;
+  font-size: 14px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.purchase-particulars-list {
+  padding: 12px;
+}
+
+.purchase-particulars-item {
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+/* Status badges */
+.status-cell {
+  text-align: center;
+}
+
+.status-badge {
+  padding: 4px 10px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 500;
+  display: inline-block;
+  text-align: center;
+}
+
+.status-pending {
+  background-color: #dcfce7;
+  color: #16a34a;
+}
+
+.status-ongoing {
+  background-color: #dbeafe;
+  color: #2563eb;
+}
+
+.status-completed {
+  background-color: #f3f4f6;
+  color: #6b7280;
+}
+
+.status-rejected {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+/* ===== 12. Inline Form Styles (Added) ===== */
+/* This section handles the sliding form functionality */
+.details-row {
+  position: relative;
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.3s ease-in-out;
+}
+
+.details-row.expanded {
+  max-height: 1000px; /* Adjust this value based on your form height */
+}
+
+.details-cell {
+  padding: 0;
+  border-bottom: none;
+}
+
+/* Inline form container - matches the expanded form in the images */
+.inline-form-container {
+  background-color: #f9fafb;
+  width: 100%;
+  padding: 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* Animations for expanding/collapsing */
+.slide-enter-active {
+  animation: slide-in 0.3s ease-out forwards;
+}
+
+.slide-leave-active {
+  animation: slide-out 0.3s ease-out forwards;
+}
+
+@keyframes slide-in {
+  from {
+    max-height: 0;
+  }
+  to {
+    max-height: 1000px;
+  }
+}
+
+@keyframes slide-out {
+  from {
+    max-height: 1000px;
+  }
+  to {
+    max-height: 0;
+  }
+}
+
+/* Make forms responsive */
+@media (max-width: 640px) {
+  .form-field-container,
+  .job-request-layout,
+  .purchase-layout {
+    grid-template-columns: 1fr;
+  }
+  
+  .field-row {
+    flex-direction: column;
+  }
+  
+  .field-label {
+    width: 100%;
+    margin-bottom: 4px;
   }
 }
