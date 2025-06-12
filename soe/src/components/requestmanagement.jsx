@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { Search, Bell, Edit2, ChevronDown, X } from "lucide-react";
+import { Search, Bell, Edit2 } from "lucide-react";
 import { VehicleReservationForm, FacilityReservationForm, JobRequestForm, PurchaseRequestForm } from "./Formcomponents";
-import "./recordmanagement.css";
+import RequestDetailsModal from "./RequestDetailsModal";
+import "./requestmanagement.css";
 
 function RequestManagement() {
     // Sample initial data
@@ -81,10 +82,12 @@ function RequestManagement() {
     const [requests, setRequests] = useState(initialRequests);
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedRequest, setSelectedRequest] = useState(null);
+    const [isViewModalOpen, setIsViewModalOpen] = useState(false);
     const [showRequests, setShowRequests] = useState(true);
     const [selectedType, setSelectedType] = useState("All"); // Type filter state
     const [showRejectionModal, setShowRejectionModal] = useState(false);
     const [rejectionReason, setRejectionReason] = useState("");
+    const [isNewRequest, setIsNewRequest] = useState(false);
 
     // Filter requests based on selected type and search query
     const filteredRequests = requests.filter((request) => {
@@ -104,6 +107,12 @@ function RequestManagement() {
     // Handle viewing a request
     const handleViewRequest = (request) => {
         setSelectedRequest(request);
+        setIsViewModalOpen(true);
+    };
+    
+    const handleCloseViewModal = () => {
+        setIsViewModalOpen(false);
+        setSelectedRequest(null);
     };
 
     // Handle adding new particulars
@@ -162,12 +171,14 @@ function RequestManagement() {
             
             setSelectedRequest(updatedRequest);
             
-            // Update in the main requests list
-            setRequests(
-                requests.map((req) =>
-                    req.id === selectedRequest.id ? updatedRequest : req
-                )
-            );
+            // Update in the main requests list only if it's a new request form
+            if (isNewRequest) {
+                 setRequests(
+                    requests.map((req) =>
+                        req.id === selectedRequest.id ? updatedRequest : req
+                    )
+                );
+            }
         }
     };
 
@@ -187,7 +198,7 @@ function RequestManagement() {
             );
 
             // Close the form and reset selection
-            setSelectedRequest(null);
+            handleCloseViewModal();
         }
     };
     
@@ -214,7 +225,7 @@ function RequestManagement() {
 
             // Close the modal and form
             setShowRejectionModal(false);
-            setSelectedRequest(null);
+            handleCloseViewModal();
             setRejectionReason("");
         }
     };
@@ -223,6 +234,22 @@ function RequestManagement() {
     const handleCancelRejection = () => {
         setShowRejectionModal(false);
         setRejectionReason("");
+    };
+
+    const handleMarkAsCompleted = () => {
+         if (selectedRequest) {
+            const updatedRequest = {
+                ...selectedRequest,
+                status: "Completed",
+                dateCompleted: new Date().toLocaleDateString()
+            };
+            setRequests(
+                requests.map(req => 
+                    req.id === selectedRequest.id ? updatedRequest : req
+                )
+            );
+            handleCloseViewModal();
+        }
     };
 
     // Handle creating a new request
@@ -253,6 +280,7 @@ function RequestManagement() {
 
         setSelectedRequest(newRequest);
         setShowRequests(false);
+        setIsNewRequest(true);
     };
 
     // Helper function to get type prefix
@@ -292,6 +320,7 @@ function RequestManagement() {
             }
         }
         setShowRequests(true);
+        setIsNewRequest(false);
     };
 
     // Handle type change in new request form
@@ -434,126 +463,54 @@ function RequestManagement() {
                                         </thead>
                                         <tbody>
                                             {filteredRequests.map((request) => (
-                                                <React.Fragment
+                                                <tr
                                                     key={request.id}
                                                 >
-                                                    <tr>
-                                                        <td className="table-cell checkbox-cell">
-                                                            <input
-                                                                type="checkbox"
-                                                                className="checkbox"
-                                                            />
-                                                        </td>
-                                                        <td className="table-cell">
-                                                            {request.type}
-                                                        </td>
-                                                        <td className="table-cell">
-                                                            {
-                                                                request.referenceNo
+                                                    <td className="table-cell checkbox-cell">
+                                                        <input
+                                                            type="checkbox"
+                                                            className="checkbox"
+                                                        />
+                                                    </td>
+                                                    <td className="table-cell">
+                                                        {request.type}
+                                                    </td>
+                                                    <td className="table-cell">
+                                                        {
+                                                            request.referenceNo
+                                                        }
+                                                    </td>
+                                                    <td className="table-cell">
+                                                        {request.from}
+                                                    </td>
+                                                    <td className="table-cell">
+                                                        {
+                                                            request.dateSubmitted
+                                                        }
+                                                    </td>
+                                                    <td className="table-cell">
+                                                        {request.dateNeeded}
+                                                    </td>
+                                                    <td className="table-cell">
+                                                        <span
+                                                            className={`status-badge status-${request.status.toLowerCase()}`}
+                                                        >
+                                                            {request.status}
+                                                        </span>
+                                                    </td>
+                                                    <td className="table-cell">
+                                                        <button
+                                                            className="view-button"
+                                                            onClick={() =>
+                                                                handleViewRequest(
+                                                                    request
+                                                                )
                                                             }
-                                                        </td>
-                                                        <td className="table-cell">
-                                                            {request.from}
-                                                        </td>
-                                                        <td className="table-cell">
-                                                            {
-                                                                request.dateSubmitted
-                                                            }
-                                                        </td>
-                                                        <td className="table-cell">
-                                                            {request.dateNeeded}
-                                                        </td>
-                                                        <td className="table-cell">
-                                                            <span
-                                                                className={`status-badge status-${request.status.toLowerCase()}`}
-                                                            >
-                                                                {request.status}
-                                                            </span>
-                                                        </td>
-                                                        <td className="table-cell">
-                                                            <button
-                                                                className="view-button"
-                                                                onClick={() =>
-                                                                    handleViewRequest(
-                                                                        request
-                                                                    )
-                                                                }
-                                                            >
-                                                                View
-                                                            </button>
-                                                        </td>
-                                                    </tr>
-
-                                                    {/* Request Details */}
-                                                    {selectedRequest &&
-                                                        selectedRequest.id ===
-                                                            request.id && (
-                                                            <tr>
-                                                                <td
-                                                                    colSpan="8"
-                                                                    className="details-cell"
-                                                                >
-                                                                    <div className="request-details">
-                                                                        <h2 className="form-title">
-                                                                            {request.type} Request Form
-                                                                        </h2>
-                                                                        <div className="reference-number">
-                                                                            {
-                                                                                request.referenceNo
-                                                                            }
-                                                                        </div>
-
-                                                                        {renderRequestForm(request, true)}
-
-                                                                        <div className="action-buttons">
-                                                                            {request.status === "Pending" && (
-                                                                                <>
-                                                                                    <button
-                                                                                        className="approve-button"
-                                                                                        onClick={handleApproveRequest}
-                                                                                    >
-                                                                                        Approve
-                                                                                    </button>
-                                                                                    <button
-                                                                                        className="reject-button"
-                                                                                        onClick={handleOpenRejectionModal}
-                                                                                    >
-                                                                                        Reject
-                                                                                    </button>
-                                                                                </>
-                                                                            )}
-                                                                            {request.status === "Ongoing" && (
-                                                                                <button
-                                                                                    className="approve-button"
-                                                                                    onClick={() => {
-                                                                                        const updatedRequest = {
-                                                                                            ...request,
-                                                                                            status: "Completed",
-                                                                                            dateCompleted: new Date().toLocaleDateString()
-                                                                                        };
-                                                                                        setRequests(
-                                                                                            requests.map(req => 
-                                                                                                req.id === request.id ? updatedRequest : req
-                                                                                            )
-                                                                                        );
-                                                                                        setSelectedRequest(null);
-                                                                                    }}
-                                                                                >
-                                                                                    Mark as Completed
-                                                                                </button>
-                                                                            )}
-                                                                            <button
-                                                                                className="close-button"
-                                                                                onClick={() => setSelectedRequest(null)}
-                                                                            >
-                                                                                Close
-                                                                            </button>
-                                                                        </div>
-                                                                    </div>
-                                                                </td>
-                                                            </tr>
-                                                        )}
-                                                </React.Fragment>
+                                                        >
+                                                            View
+                                                        </button>
+                                                    </td>
+                                                </tr>
                                             ))}
                                         </tbody>
                                     </table>
@@ -598,7 +555,10 @@ function RequestManagement() {
                                 </button>
                                 <button
                                     className="reject-button"
-                                    onClick={() => setShowRequests(true)}
+                                    onClick={() => {
+                                        setShowRequests(true);
+                                        setIsNewRequest(false);
+                                    }}
                                 >
                                     Cancel
                                 </button>
@@ -615,6 +575,18 @@ function RequestManagement() {
                 </div>
             </div>
             
+            {/* View Request Modal */}
+            {isViewModalOpen && selectedRequest && (
+                 <RequestDetailsModal
+                    request={selectedRequest}
+                    onClose={handleCloseViewModal}
+                    onApprove={handleApproveRequest}
+                    onReject={handleOpenRejectionModal}
+                    onMarkAsCompleted={handleMarkAsCompleted}
+                    renderForm={renderRequestForm}
+                 />
+            )}
+
             {/* Rejection Reason Modal */}
             {showRejectionModal && (
                 <div className="modal-overlay">

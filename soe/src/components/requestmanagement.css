@@ -511,8 +511,8 @@
 }
 
 .status-pending {
-  background-color: #dcfce7;
-  color: #16a34a;
+  background-color: #fefce8;
+  color: #ca8a04;
 }
 
 .status-ongoing {
@@ -521,8 +521,8 @@
 }
 
 .status-completed {
-  background-color: #f3f4f6;
-  color: var(--text-tertiary);
+  background-color: #dcfce7;
+  color: #16a34a;
 }
 
 .status-rejected {
@@ -550,7 +550,7 @@
   transition: background-color 0.2s;
 }
 
-button:hover {
+.approve-button:hover {
   background-color: var(--primary-dark);
 }
 
@@ -629,6 +629,12 @@ button:hover {
   padding: 24px;
   width: 480px;
   max-width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.view-modal {
+    width: 800px;
 }
 
 .modal-title {
