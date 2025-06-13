@@ -1,79 +1,21 @@
-import React, { useState } from "react";
-import { Search, Bell, Edit2, ChevronDown } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Search, Bell, Edit2, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import "./recordmanagement.css";
 import RecordViewModal from "./RecordViewModal";
 
 function RecordManagement() {
   // Sample initial data with expanded information for each type of request
   const initialRequests = [
-    {
-      id: 1,
-      type: "FR",
-      typeLabel: "Facility",
-      referenceNo: "GSO-FR-0001",
-      from: "Mary Ann Lim",
-      requestor: "Mary Ann Lim",
-      dateSubmitted: "12/19/2024",
-      dateNeeded: "12/20/2024",
-      venue: "Conference Room A",
-      natureOfActivity: "Meeting",
-      activity: "Project Kickoff",
-      purpose: "Planning for Q1 Projects",
-      timeStart: "10:00 am - 12:00 pm",
-      specialInstruction: "Need projector setup",
-      materialsEquipment: "Projector, Whiteboard",
-      status: "Completed"
-    },
-    {
-      id: 2,
-      type: "VR",
-      typeLabel: "Vehicle",
-      referenceNo: "GSO-VR-0001",
-      from: "Mary Ann Lim",
-      requestor: "Mary Ann Lim",
-      dateSubmitted: "12/19/2024",
-      dateNeeded: "12/20/2024",
-      departureTime: "09:00",
-      arrivalTime: "17:00",
-      driver: "John Smith",
-      destination: "Downtown Business District",
-      purpose: "Client Meeting",
-      passengerCount: "3",
-      passengers: "Mary Ann Lim, David Chen, Sarah Johnson",
-      status: "Ongoing"
-    },
-    {
-      id: 3,
-      type: "PR",
-      typeLabel: "Purchase",
-      referenceNo: "GSO-PR-0001",
-      from: "Herliza Estrada",
-      dateSubmitted: "12/19/2024",
-      dateNeeded: "12/20/2024",
-      natureOfWork: "Office Supplies",
-      particulars: [
-        { qty: "5", details: "Reams of A4 Paper" },
-        { qty: "10", details: "Black Ink Cartridges" },
-        { qty: "3", details: "Staplers" }
-      ],
-      status: "Pending"
-    },
-    {
-      id: 4,
-      type: "JR",
-      typeLabel: "Job",
-      referenceNo: "GSO-JR-0001",
-      from: "Herliza Estrada",
-      dateSubmitted: "12/19/2024",
-      dateNeeded: "12/20/2024",
-      dateCompleted: "",
-      natureOfWork: "Office Maintenance",
-      particulars: [
-        { qty: "1", details: "Fix leaking ceiling in HR department" },
-        { qty: "2", details: "Replace faulty electrical outlets" }
-      ],
-      status: "Rejected"
-    }
+    { id: 1, type: "FR", typeLabel: "Facility", referenceNo: "GSO-FR-0001", from: "Mary Ann Lim", requestor: "Mary Ann Lim", dateSubmitted: "12/19/2024", dateNeeded: "12/20/2024", venue: "Conference Room A", natureOfActivity: "Meeting", activity: "Project Kickoff", purpose: "Planning for Q1 Projects", timeStart: "10:00 am - 12:00 pm", specialInstruction: "Need projector setup", materialsEquipment: "Projector, Whiteboard", status: "Completed" },
+    { id: 2, type: "VR", typeLabel: "Vehicle", referenceNo: "GSO-VR-0001", from: "Mary Ann Lim", requestor: "Mary Ann Lim", dateSubmitted: "12/19/2024", dateNeeded: "12/20/2024", departureTime: "09:00", arrivalTime: "17:00", driver: "John Smith", destination: "Downtown Business District", purpose: "Client Meeting", passengerCount: "3", passengers: "Mary Ann Lim, David Chen, Sarah Johnson", status: "Ongoing" },
+    { id: 3, type: "PR", typeLabel: "Purchase", referenceNo: "GSO-PR-0001", from: "Herliza Estrada", dateSubmitted: "12/19/2024", dateNeeded: "12/20/2024", natureOfWork: "Office Supplies", particulars: [{ qty: "5", details: "Reams of A4 Paper" }, { qty: "10", details: "Black Ink Cartridges" }, { qty: "3", details: "Staplers" }], status: "Pending" },
+    { id: 4, type: "JR", typeLabel: "Job", referenceNo: "GSO-JR-0001", from: "Herliza Estrada", dateSubmitted: "12/19/2024", dateNeeded: "12/20/2024", dateCompleted: "", natureOfWork: "Office Maintenance", particulars: [{ qty: "1", details: "Fix leaking ceiling in HR department" }, { qty: "2", details: "Replace faulty electrical outlets" }], status: "Rejected" },
+    { id: 5, type: "VR", typeLabel: "Vehicle", referenceNo: "GSO-VR-0002", from: "John Doe", requestor: "John Doe", dateSubmitted: "01/10/2025", dateNeeded: "01/12/2025", departureTime: "13:00", arrivalTime: "15:00", driver: "Jane Doe", destination: "Supplier Warehouse", purpose: "Pickup Supplies", passengerCount: "1", passengers: "John Doe", status: "Completed" },
+    { id: 6, type: "PR", typeLabel: "Purchase", referenceNo: "GSO-PR-0002", from: "Jane Doe", dateSubmitted: "02/05/2025", dateNeeded: "02/15/2025", natureOfWork: "New Equipment", particulars: [{ qty: "2", details: "Laptops for new hires" }], status: "Ongoing" },
+    { id: 7, type: "FR", typeLabel: "Facility", referenceNo: "GSO-FR-0002", from: "John Doe", requestor: "John Doe", dateSubmitted: "03/01/2025", dateNeeded: "03/10/2025", venue: "Auditorium", natureOfActivity: "Training", activity: "Company-wide seminar", purpose: "Annual Training", timeStart: "9:00 am - 5:00 pm", specialInstruction: "AV equipment required", materialsEquipment: "Podium, Microphone, Projector", status: "Pending" },
+    { id: 8, type: "JR", typeLabel: "Job", referenceNo: "GSO-JR-0002", from: "Jane Doe", dateSubmitted: "04/20/2025", dateNeeded: "04/25/2025", dateCompleted: "", natureOfWork: "IT Support", particulars: [{ qty: "1", details: "Install new server" }], status: "Ongoing" },
+    { id: 9, type: "PR", typeLabel: "Purchase", referenceNo: "GSO-PR-0003", from: "Mary Ann Lim", dateSubmitted: "05/15/2025", dateNeeded: "05/25/2025", natureOfWork: "Marketing Materials", particulars: [{ qty: "500", details: "Brochures" }, { qty: "100", details: "Business Cards" }], status: "Pending" },
+    { id: 10, type: "VR", typeLabel: "Vehicle", referenceNo: "GSO-VR-0003", from: "Herliza Estrada", requestor: "Herliza Estrada", dateSubmitted: "06/01/2025", dateNeeded: "06/03/2025", departureTime: "08:00", arrivalTime: "18:00", driver: "John Smith", destination: "Conference Center", purpose: "Industry Conference", passengerCount: "4", passengers: "Herliza Estrada, Team Members", status: "Pending" }
   ];
 
   // Filter options
@@ -87,7 +29,9 @@ function RecordManagement() {
   const [selectedTypeFilter, setSelectedTypeFilter] = useState("All");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState(null);
-  
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(5); // Set number of items per page
+
   // Filter requests based on selected filters and search query
   const filteredRequests = requests.filter((request) => {
     const matchesStatusFilter = selectedStatusFilter === "All" || request.status === selectedStatusFilter;
@@ -99,6 +43,24 @@ function RecordManagement() {
     return matchesStatusFilter && matchesTypeFilter && matchesSearch;
   });
 
+  // Pagination Logic
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredRequests.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filteredRequests.length / itemsPerPage);
+
+  // Reset to page 1 whenever filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedStatusFilter, selectedTypeFilter, searchQuery]);
+
+  // Handle changing pages
+  const handlePageChange = (pageNumber) => {
+    if (pageNumber > 0 && pageNumber <= totalPages) {
+      setCurrentPage(pageNumber);
+    }
+  };
+
   // Handle view button click
   const handleViewRequest = (request) => {
     setSelectedRequest(request);
@@ -108,6 +70,7 @@ function RecordManagement() {
   // Close modal
   const closeModal = () => {
     setIsModalOpen(false);
+    setSelectedRequest(null);
   };
 
   return (
@@ -201,8 +164,8 @@ function RecordManagement() {
                 </tr>
               </thead>
               <tbody>
-                {filteredRequests.length > 0 ? (
-                  filteredRequests.map((request) => (
+                {currentItems.length > 0 ? (
+                  currentItems.map((request) => (
                     <tr key={request.id} className="table-row">
                       <td className="table-cell">{request.typeLabel}</td>
                       <td className="table-cell">{request.referenceNo}</td>
@@ -215,7 +178,7 @@ function RecordManagement() {
                         </span>
                       </td>
                       <td className="table-cell">
-                        <button 
+                        <button
                           className="view-button"
                           onClick={() => handleViewRequest(request)}
                         >
@@ -234,6 +197,26 @@ function RecordManagement() {
               </tbody>
             </table>
           </div>
+            
+          {/* Pagination Controls */}
+          {filteredRequests.length > 0 && (
+            <div className="pagination-container">
+                <div className="pagination-info">
+                    Showing <span>{Math.min(indexOfFirstItem + 1, filteredRequests.length)}</span> to <span>{Math.min(indexOfLastItem, filteredRequests.length)}</span> of <span>{filteredRequests.length}</span> results
+                </div>
+                <div className="pagination">
+                    <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1} className="page-link">
+                        <ChevronLeft size={16} />
+                        <span>Previous</span>
+                    </button>
+                    <button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages || totalPages === 0} className="page-link">
+                        <span>Next</span>
+                        <ChevronRight size={16} />
+                    </button>
+                </div>
+            </div>
+          )}
+
 
           {/* Floating Action Button */}
           <div className="fab-container">
@@ -245,7 +228,7 @@ function RecordManagement() {
       </div>
 
       {/* Record View Modal */}
-      <RecordViewModal 
+      <RecordViewModal
         isOpen={isModalOpen}
         onClose={closeModal}
         request={selectedRequest}
