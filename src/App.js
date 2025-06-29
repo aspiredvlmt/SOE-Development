@@ -1,18 +1,10 @@
-import React from 'react';
-import './App.css';
-import RequestFrequency from './components/RequestFrequency';
-import RequestQueue from './components/RequestQueue';
-import RightPanel from './components/RightPanel';
-import Overview from './components/Overview';
+import KronosSignup from './KronosSignup';
+import './KronosSignup.css';
 
 function App() {
   return (
-    <div className="dashboard-container">
-      
-      <Overview />
-      <RequestFrequency />
-      <RequestQueue />
-      <RightPanel />
+    <div className="App">
+      <KronosSignup />
     </div>
   );
 }
